@@ -1,0 +1,29 @@
+services:
+  nginx:
+    build: images/nginx
+    command: nginx -g "daemon off;"
+    links:
+      - php
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+  php:
+    build: images/php
+    volumes:
+      - ./:/var/www/html
+    command: php-fpm
+    links:
+      - cache
+    environment:
+      APP_ENV: local
+      APP_DEBUG: 'true'
+      APP_KEY: SomeRandomKey!!!
+      APP_LOCALE: pt-BR
+      APP_FALLBACK_LOCALE: en
+      MEMCACHED_HOST: cache
+      CACHE_DRIVER: memcached
+    ports:
+      - "9000:9000"
+  cache:
+    image: memcached:1.6-alpine
